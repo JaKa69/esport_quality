@@ -24,7 +24,7 @@ jobs:
         uses: actions/cache@v2  # Mise à jour vers la version v2
         with:
           path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
+          key: ${{ runner.os }}-sonar-${{ github.sha }}  # Cache basé sur le SHA du commit
           restore-keys: ${{ runner.os }}-sonar
 
       - name: SonarCloud Scan
