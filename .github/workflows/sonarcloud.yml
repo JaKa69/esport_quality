@@ -9,18 +9,17 @@ on:
 
 jobs:
   build:
-    name: SonarCloud
+    name: Build & SonarCloud
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: '21'
           distribution: 'temurin'
-          java-package: jdk
+          java-version: '21'
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
@@ -29,12 +28,10 @@ jobs:
           key: ${{ runner.os }}-sonar-${{ github.sha }}
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5.0.0
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.projectKey=EVNALEXIS_esport_quality
-            -Dsonar.organization=evnalexis
+      - name: Build with Maven
+        run: mvn clean verify
+
+      - name: Run SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn sonar:sonar -Dsonar.projectKey=EVNALEXIS_esport_quality -Dsonar.organization=evnalexis -Dsonar.host.url=https://sonarcloud.io
