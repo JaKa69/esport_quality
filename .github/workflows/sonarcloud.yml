@@ -13,23 +13,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2  # Vérifie que le code est bien récupéré
 
       - name: Set up Java (si ton projet utilise Java)
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '11'  # Utilise Java 11 (ou une autre version si nécessaire)
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@v1
+        uses: actions/cache@v2  # Mise à jour vers la version v2
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@master  # L'action SonarCloud
         with:
-          projectBaseDir: .
+          projectBaseDir: .  # Le répertoire du projet (généralement, cela ne change pas)
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Utilisation du token secret
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Utilisation du token SonarCloud secret
