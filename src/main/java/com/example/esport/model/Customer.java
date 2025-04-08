@@ -15,9 +15,11 @@ import java.util.List;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
+    private String username;
     private String firstname;
-    private String name;
+    private String lastName;
+    private String password;
     @Column(nullable = false, unique = true)
     private String mail;
     @OneToMany(mappedBy = "buyer")
