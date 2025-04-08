@@ -18,6 +18,7 @@ public class Customer {
     private Long id;
     private String username;
     private String firstname;
+    @Column(name = "LASTNAME")
     private String lastName;
     private String password;
     @Column(nullable = false, unique = true)
