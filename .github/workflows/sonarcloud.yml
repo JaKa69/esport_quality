@@ -21,7 +21,7 @@ jobs:
           java-version: '11'  # Utilise Java 11 (ou une autre version si nécessaire)
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@v2  # Mise à jour vers la version v2
+        uses: actions/cache@v4  # Mise à jour vers la version v2
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar-${{ github.sha }}  # Cache basé sur le SHA du commit
