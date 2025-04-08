@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket</title>
+    <script>
+        function promptDownload(imageDataUrl) {
+            if (confirm("Voulez-vous télécharger l'image du ticket ?")) {
+                // Crée un lien invisible pour le téléchargement
+                const a = document.createElement('a');
+                a.href = imageDataUrl;
+                a.download = 'ticket.png'; // Nom du fichier à télécharger
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+
+        // Appel AJAX pour récupérer le QR Code généré et afficher l'image
+        function generateTicket() {
+            fetch('/generate-ticket')
+                .then(response => response.blob())
+                .then(imageBlob => {
+                    const imageUrl = URL.createObjectURL(imageBlob);
+                    promptDownload(imageUrl);
+                });
+        }
+    </script>
+</head>
+<body>
+<button onclick="generateTicket()">Générer le Ticket</button>
+</body>
+</html>

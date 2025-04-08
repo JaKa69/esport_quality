@@ -7,20 +7,18 @@ import com.example.esport.repository.EventRepository;
 import com.example.esport.repository.CustomerRepository;
 import com.example.esport.repository.TicketRepository;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 public class TicketService {
 
-
     private final TicketRepository ticketRepository;
-
     private final EventRepository eventRepository;
-
-
     private final CustomerRepository customerRepository;
 
     public TicketService(TicketRepository ticketRepository, EventRepository eventRepository, CustomerRepository customerRepository) {
@@ -29,29 +27,34 @@ public class TicketService {
         this.customerRepository = customerRepository;
     }
 
-    public String createTicketAndGenerateQr(Long eventId, Long customerId) {
+    public byte[] createTicketAndGenerateQr(Long eventId, Long customerId) throws IOException {
+        // Récupère l'événement et le client
+        System.out.println(eventId);
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+        // Crée et sauvegarde le ticket
+        Ticket ticket = new Ticket(39.99f, false, LocalDate.now(), "Gérard", event, customer);
+        Ticket savedTicket = ticketRepository.save(ticket);
 
-        // Créer et enregistrer le ticket
-        Ticket ticket = new Ticket();
-        ticket.setPrice(BigDecimal.valueOf(39.99));
-        ticket.setMultipass(false);
-        ticket.setReservationDate(LocalDate.now());
-        ticket.setNameUser("Gérard");
-        ticket.setEvent(event);
-        ticket.setBuyer(customer);
+        // Génère le QR Code et l'image du ticket
+        String qrUrl = generateQrUrl(savedTicket.getId());
+        byte[] ticketImage = TicketImageService.generateTicketImage(
+                savedTicket.getNameUser(),
+                savedTicket.isMultipass(),
+                savedTicket.getReservationDate().toString(),
+                savedTicket.getPrice(),
+                savedTicket.getId()
+        );
 
-        Ticket savedTicket = ticketRepository.save(ticket); // ID généré ici
+        // Retourne l'URL du QR Code (image déjà générée dans le service d'image)
+        return ticketImage;
+    }
 
-        // Générer URL + QR Code
-        String baseUrl = "https://tonapp.com/validate?ticket=" + savedTicket.getId();
+    private String generateQrUrl(int ticketId) throws IOException {
+        String baseUrl = "https://tonapp.com/validate?ticket=" + ticketId;
         String encoded = URLEncoder.encode(baseUrl, StandardCharsets.UTF_8);
-        String qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encoded;
-
-        return qrUrl;
+        System.out.println("Encoded URL: " + encoded);
+        return "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encoded;
     }
 }
