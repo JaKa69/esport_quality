@@ -15,10 +15,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2  # Vérifie que le code est bien récupéré
 
-      - name: Set up Java (si ton projet utilise Java)
+      - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: '11'  # Utilise Java 11 (ou une autre version si nécessaire)
+            java-version: '21'  # Spécifie la version de Java que tu veux
+            distribution: 'adoptopenjdk'  # Utilisation de la distribution AdoptOpenJDK
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v4  # Mise à jour vers la version v2
