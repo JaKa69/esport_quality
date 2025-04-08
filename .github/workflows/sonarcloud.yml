@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
             java-version: '21'  # Spécifie la version de Java que tu veux
-            distribution: 'adoptium'  # Utilisation de la distribution AdoptOpenJDK
+            distribution: 'temurin'  # Utilisation de la distribution AdoptOpenJDK
             java-package: jdk
 
       - name: Cache SonarCloud packages
