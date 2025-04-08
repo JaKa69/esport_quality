@@ -13,25 +13,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2  # Vérifie que le code est bien récupéré
+        uses: actions/checkout@v2
 
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-            java-version: '21'  # Spécifie la version de Java que tu veux
-            distribution: 'temurin'  # Utilisation de la distribution AdoptOpenJDK
-            java-package: jdk
+          java-version: '21'
+          distribution: 'temurin'
+          java-package: jdk
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@v4  # Mise à jour vers la version v2
+        uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar-${{ github.sha }}  # Cache basé sur le SHA du commit
+          key: ${{ runner.os }}-sonar-${{ github.sha }}
           restore-keys: ${{ runner.os }}-sonar
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master  # L'action SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
         with:
-          projectBaseDir: .  # Le répertoire du projet (généralement, cela ne change pas)
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=EVNALEXIS_esport_quality
+            -Dsonar.organization=evnalexis
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Utilisation du token SonarCloud secret
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
