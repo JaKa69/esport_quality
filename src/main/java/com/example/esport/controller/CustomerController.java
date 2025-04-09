@@ -37,7 +37,7 @@ public class CustomerController {
         );
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<UserDto> login(@RequestBody CredentialsDto user) throws Exception {
         return ResponseEntity.ok(
             userMapper.convertToDto(
