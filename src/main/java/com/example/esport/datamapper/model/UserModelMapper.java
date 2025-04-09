@@ -1,5 +1,6 @@
 package com.example.esport.datamapper.model;
 
+import com.example.esport.datamapper.converter.PasswordEncoderConverter;
 import com.example.esport.dto.SignUpDto;
 import com.example.esport.dto.UserDto;
 import com.example.esport.model.Customer;
@@ -10,6 +11,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class UserModelMapper {
+    private final PasswordEncoderConverter passwordEncoderConverter;
+
+    public UserModelMapper(PasswordEncoderConverter passwordEncoderConverter) {
+        this.passwordEncoderConverter = passwordEncoderConverter;
+    }
 
     @Bean("customerEntityToUserDto")
     public ModelMapper convertToDto() {
@@ -29,7 +35,7 @@ public class UserModelMapper {
         typeMap.addMappings(mapper -> {
             mapper.map(SignUpDto::getMail, Customer::setMail);
             mapper.map(SignUpDto::getLogin, Customer::setUsername);
-            mapper.map(SignUpDto::getPassword, Customer::setPassword);
+            mapper.using(passwordEncoderConverter).map(SignUpDto::getPassword, Customer::setPassword);
             mapper.map(SignUpDto::getFirstName, Customer::setFirstname);
             mapper.map(SignUpDto::getLastName, Customer::setLastName);
         });
