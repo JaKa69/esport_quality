@@ -11,7 +11,7 @@ public class CustomerFixture {
             "firstname",
             "lastname",
             "password",
-            "mail",
+            "firstname.lastname@toto.com",
             null
         );
     }
@@ -19,7 +19,7 @@ public class CustomerFixture {
         return new UserDto(
                 1L,
                 "username",
-                "username.toto@toto.com",
+                "firstname.lastname@toto.com",
                 "password"
         );
     }
