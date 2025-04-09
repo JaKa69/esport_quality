@@ -19,7 +19,7 @@
 
         // Appel AJAX pour récupérer le QR Code généré et afficher l'image
         function generateTicket() {
-            fetch('/generate-ticket')
+            fetch('/generate-ticket/1/1')
                 .then(response => response.blob())
                 .then(imageBlob => {
                     const imageUrl = URL.createObjectURL(imageBlob);
