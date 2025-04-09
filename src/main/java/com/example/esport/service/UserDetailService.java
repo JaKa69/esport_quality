@@ -24,6 +24,6 @@ public class UserDetailService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new User(user.getUsername(), user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority(user.getFirstname())));
+                Collections.singletonList(new SimpleGrantedAuthority(user.getFirstName())));
     }
 }

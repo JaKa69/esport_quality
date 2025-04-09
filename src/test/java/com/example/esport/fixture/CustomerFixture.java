@@ -19,8 +19,10 @@ public class CustomerFixture {
         return new UserDto(
                 1L,
                 "username",
-                "firstname.lastname@toto.com",
-                "password"
+                "username.toto@toto.com",
+                "password",
+                "test",
+                "testLastName"
         );
     }
 }

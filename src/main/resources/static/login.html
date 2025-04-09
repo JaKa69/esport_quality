@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion</title>
+</head>
+<body>
+<h1>Connexion</h1>
+<form id="login-form">
+  <label for="username">Nom d'utilisateur :</label>
+  <input type="text" id="username" name="username" required><br><br>
+
+  <label for="password">Mot de passe :</label>
+  <input type="password" id="password" name="password" required><br><br>
+
+  <button type="submit">Se connecter</button>
+</form>
+
+<div id="message"></div>
+
+<script>
+  document.getElementById("login-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const response = await fetch("/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        login: username,
+        password: password
+      })
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.href = "/home.html";
+      } else {
+        return response.text().then(msg => alert("Utilisateur ou mot de passe incorrect"));
+      }
+    });
+
+    const messageDiv = document.getElementById("message");
+
+    if (response.ok) {
+      const user = await response.json();
+      messageDiv.innerText = `Bienvenue, ${user.firstName} ${user.lastName} !`;
+      // Redirection possible ici
+      // window.location.href = "/";
+    } else {
+      messageDiv.innerText = "Identifiants incorrects.";
+    }
+  });
+</script>
+</body>
+</html>

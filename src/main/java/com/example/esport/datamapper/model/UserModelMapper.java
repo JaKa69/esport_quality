@@ -25,6 +25,9 @@ public class UserModelMapper {
             mapper.map(Customer::getId, UserDto::setId);
             mapper.map(Customer::getMail, UserDto::setMail);
             mapper.map(Customer::getUsername, UserDto::setUsername);
+            mapper.map(Customer::getFirstName, UserDto::setFirstName);
+            mapper.map(Customer::getLastName, UserDto::setLastName);
+
         });
         return modelMapper;
     }
@@ -36,7 +39,7 @@ public class UserModelMapper {
             mapper.map(SignUpDto::getMail, Customer::setMail);
             mapper.map(SignUpDto::getLogin, Customer::setUsername);
             mapper.using(passwordEncoderConverter).map(SignUpDto::getPassword, Customer::setPassword);
-            mapper.map(SignUpDto::getFirstName, Customer::setFirstname);
+            mapper.map(SignUpDto::getFirstName, Customer::setFirstName);
             mapper.map(SignUpDto::getLastName, Customer::setLastName);
         });
         return modelMapper;
