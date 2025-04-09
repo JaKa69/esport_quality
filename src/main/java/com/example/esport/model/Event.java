@@ -24,4 +24,5 @@ public class Event {
     private LocalDate endDate;
     @OneToMany(mappedBy = "event")
     private List<Ticket> tickets;
+
 }
