@@ -2,6 +2,7 @@ package com.example.esport.service;
 
 import com.example.esport.fixture.CustomerFixture;
 import com.example.esport.fixture.EventFixture;
+import com.example.esport.fixture.TicketFixture;
 import com.example.esport.model.Customer;
 import com.example.esport.model.Event;
 import com.example.esport.model.Ticket;
@@ -65,5 +66,58 @@ public class TicketServiceTest {
         assertFalse(ticket.isMultipass());
         assertEquals(event, ticket.getEvent());
         assertEquals(customer, ticket.getBuyer());
+    }
+
+    @Test
+    void buyMultipass_OK() {
+        // GIVEN
+        Customer buyer = CustomerFixture.customerFixture();
+
+        when(ticketRepository.findByBuyerAndIsMultipassTrue(buyer))
+            .thenReturn(Optional.empty());
+        when(ticketRepository.save(any()))
+            .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // WHEN
+        Ticket ticket = ticketService.buyMultipass(TicketFixture.ticketMultipassFixture());
+
+        // THEN
+        assertTrue(ticket.isMultipass());
+        assertEquals(TicketFixture.ticketMultipassFixture(), ticket);
+        verify(ticketRepository).save(any(Ticket.class));
+    }
+    @Test
+    void buyMultipass_incompleteDataBuyer() {
+        assertThrows(IllegalArgumentException.class, () ->
+            ticketService.buyMultipass(
+                TicketFixture.ticketWithInvalidDatasBuyerFixture()
+            )
+        );
+    }
+    @Test
+    void buyMultipass_incompleteDataEvent() {
+        assertThrows(IllegalArgumentException.class, () ->
+            ticketService.buyMultipass(
+                TicketFixture.ticketWithInvalidDatasEventFixture()
+            )
+        );
+    }
+    @Test
+    void buyMultipass_incompleteDataNameUser() {
+        assertThrows(IllegalArgumentException.class, () ->
+            ticketService.buyMultipass(
+                TicketFixture.ticketWithInvalidDatasNameUserFixture()
+            )
+        );
+    }
+    @Test
+    void buyMultipass_alreadyExists() {
+        // GIVEN : le client a déjà un multipass
+        when(ticketRepository.findByBuyerAndIsMultipassTrue(CustomerFixture.customerFixture()))
+                .thenReturn(Optional.of(TicketFixture.ticketFixture()));
+
+        // WHEN + THEN
+        assertThrows(IllegalStateException.class, () ->
+                ticketService.buyMultipass(TicketFixture.ticketFixture()));
     }
 }

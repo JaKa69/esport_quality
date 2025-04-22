@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class TicketService {
@@ -40,5 +41,23 @@ public class TicketService {
                 savedTicket.getPrice(),
                 savedTicket.getId()
         );
+    }
+
+    public Ticket buyMultipass(Ticket ticket) {
+        if (ticket.getBuyer() == null) {
+            throw new IllegalArgumentException("Buyer cannot be null");
+        }
+        if (ticket.getEvent() == null) {
+            throw new IllegalArgumentException("Event cannot be null");
+        }
+        if (ticket.getNameUser() == null || ticket.getNameUser().isBlank()) {
+            throw new IllegalArgumentException("Nom d'utilisateur invalide");
+        }
+
+        Optional<Ticket> existingTicket = ticketRepository.findByBuyerAndIsMultipassTrue(ticket.getBuyer());
+        if (existingTicket.isPresent()) {
+            throw new IllegalStateException("Le client possède déjà un multipass.");
+        }
+        return ticketRepository.save(ticket);
     }
 }
