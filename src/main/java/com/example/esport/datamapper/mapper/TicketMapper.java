@@ -12,7 +12,13 @@ public class TicketMapper {
     @Autowired
     @Qualifier("ticketEntityToMultipassDto")
     private ModelMapper convertTicketToMultipassDto;
+    @Autowired
+    @Qualifier("multipassDtoToTicketEntity")
+    private ModelMapper convertMultipassDtoToTicketEntity;
     public MultipassDto convertToMultipassDto(Ticket entity) {
         return convertTicketToMultipassDto.map(entity, MultipassDto.class);
+    }
+    public Ticket convertToTicketEntity(MultipassDto entity) {
+        return convertMultipassDtoToTicketEntity.map(entity, Ticket.class);
     }
 }

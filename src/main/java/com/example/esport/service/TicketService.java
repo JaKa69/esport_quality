@@ -43,27 +43,21 @@ public class TicketService {
         );
     }
 
-    public Ticket buyMultipass(Customer buyer, Event event, float price, String nameUser) {
-        if (buyer == null) {
+    public Ticket buyMultipass(Ticket ticket) {
+        if (ticket.getBuyer() == null) {
             throw new IllegalArgumentException("Buyer cannot be null");
         }
-        if (event == null) {
+        if (ticket.getEvent() == null) {
             throw new IllegalArgumentException("Event cannot be null");
         }
-        if (nameUser == null) {
-            throw new IllegalArgumentException("Nom d'utilisateur invalide");
-        }
-        if (nameUser.isBlank()) {
+        if (ticket.getNameUser() == null || ticket.getNameUser().isBlank()) {
             throw new IllegalArgumentException("Nom d'utilisateur invalide");
         }
 
-        Optional<Ticket> existingTicket = ticketRepository.findByBuyerAndIsMultipassTrue(buyer);
+        Optional<Ticket> existingTicket = ticketRepository.findByBuyerAndIsMultipassTrue(ticket.getBuyer());
         if (existingTicket.isPresent()) {
             throw new IllegalStateException("Le client possède déjà un multipass.");
         }
-        Ticket ticket = new Ticket(price, true, LocalDate.now(), nameUser, event, buyer);
-
         return ticketRepository.save(ticket);
-
     }
 }

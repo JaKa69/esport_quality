@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MultipassDto {
+    private Long id;
     private Customer buyer;
     private Event event;
     private float price;
