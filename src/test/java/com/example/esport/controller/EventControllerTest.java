@@ -7,6 +7,7 @@ import com.example.esport.model.Event;
 import com.example.esport.service.EventService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -18,7 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EventController.class)
@@ -71,4 +73,34 @@ class EventControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void shouldCreateOrUpdateEvent() throws Exception {
+        EventDto dto = EventFixture.eventDtoFixture();
+        Event event = EventFixture.eventFixture();
+
+        Mockito.when(eventMapper.convertToEntity(dto)).thenReturn(event);
+        Mockito.when(eventService.saveEvent(event)).thenReturn(event);
+        Mockito.when(eventMapper.convertToDto(event)).thenReturn(dto);
+
+        mockMvc.perform(
+            post("/event")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(dto))
+              .with(csrf())
+        ).andExpect(status().isCreated())
+         .andExpect(jsonPath("$.id").value(1L));
+    }
+
+    @Test
+    void shouldDeleteEvent() throws Exception {
+        Long eventId = 1L;
+
+        mockMvc.perform(delete("/event/{id}", eventId)
+            .with(csrf())
+        ).andExpect(status().isNoContent());
+
+        Mockito.verify(eventService).deleteEventById(eventId);
+    }
+
 }

@@ -3,11 +3,9 @@ package com.example.esport.controller;
 import com.example.esport.datamapper.mapper.EventMapper;
 import com.example.esport.dto.EventDto;
 import com.example.esport.service.EventService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,5 +32,24 @@ public class EventController {
             eventService.findEventById(eventId)
                 .map(eventMapper::convertToDto)
         );
+    }
+    @PostMapping
+    public ResponseEntity<EventDto> createOrUpdateEvent(@RequestBody EventDto eventDto) {
+        return new ResponseEntity<>(
+            eventMapper.convertToDto(
+                eventService.saveEvent(
+                    eventMapper.convertToEntity(
+                        eventDto
+                    )
+                )
+            ),
+            HttpStatus.CREATED
+        );
+    }
+
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
+        eventService.deleteEventById(eventId);
+        return ResponseEntity.noContent().build();
     }
 }

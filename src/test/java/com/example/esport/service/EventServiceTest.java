@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,5 +43,28 @@ class EventServiceTest {
         Optional<Event> result = service.findEventById(eventId);
         //THEN
         assertThat(result).isEqualTo(Optional.of(EventFixture.eventFixture()));
+    }
+    @Test
+    void saveEvent() {
+        // GIVEN
+        Event eventToSave = EventFixture.eventFixture();
+        when(repository.save(eventToSave)).thenReturn(eventToSave);
+
+        // WHEN
+        Event result = service.saveEvent(eventToSave);
+
+        // THEN
+        assertThat(result).isEqualTo(eventToSave);
+    }
+    @Test
+    void deleteEventById() {
+        // GIVEN
+        Long eventId = 1L;
+
+        // WHEN
+        service.deleteEventById(eventId);
+
+        // THEN
+        verify(repository).deleteById(eventId);
     }
 }
