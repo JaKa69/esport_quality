@@ -27,7 +27,6 @@ public class TicketMapper {
     }
     public TicketDto convertToTicketDto(Ticket entity) {
         return convertTicketToTicketDto.map(entity, TicketDto.class);
-
     }
     public Ticket convertMultipassToTicketEntity(MultipassDto entity) {
         return convertMultipassDtoToTicketEntity.map(entity, Ticket.class);

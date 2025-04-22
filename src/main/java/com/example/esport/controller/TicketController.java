@@ -7,6 +7,8 @@ import com.example.esport.service.TicketService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tickets")
 public class TicketController {
@@ -50,6 +52,19 @@ public class TicketController {
                         false
                     )
                 )
+            );
+        } catch (IllegalArgumentException | IllegalStateException | SecurityException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PostMapping("/multiple-ticket")
+    public ResponseEntity<?> buyMultipleTickets(@RequestBody List<TicketDto> request) {
+        try {
+            return ResponseEntity.ok(
+                request.stream().map(val -> ticketService.buyTicket(
+                    ticketMapper.convertTicketDtoToTicketEntity(val),
+                    false)
+                ).toList()
             );
         } catch (IllegalArgumentException | IllegalStateException | SecurityException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

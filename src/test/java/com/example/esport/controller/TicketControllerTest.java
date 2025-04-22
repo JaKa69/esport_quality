@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -114,4 +116,34 @@ class TicketControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Invalid ticket"));
     }
+    @Test
+    void shouldBuyMultipleTicketsSuccessfully() throws Exception {
+        List<TicketDto> dtoList = List.of(TicketFixture.ticketDtoFixture());
+        Ticket ticket = TicketFixture.ticketFixture();
+
+        when(ticketMapper.convertTicketDtoToTicketEntity(dtoList.get(0))).thenReturn(ticket);
+        when(ticketService.buyTicket(ticket, false)).thenReturn(ticket);
+
+        mockMvc.perform(post("/tickets/multiple-ticket")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dtoList))
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnBadRequestIfBuyMultipleTicketsFails() throws Exception {
+        List<TicketDto> dtoList = List.of(TicketFixture.ticketDtoFixture());
+
+        when(ticketMapper.convertTicketDtoToTicketEntity(dtoList.get(0)))
+                .thenThrow(new IllegalArgumentException("Invalid multiple ticket"));
+
+        mockMvc.perform(post("/tickets/multiple-ticket")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dtoList))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid multiple ticket"));
+    }
+
 }
