@@ -43,21 +43,23 @@ public class TicketService {
         );
     }
 
-    public Ticket buyMultipass(Ticket ticket) {
-        if (ticket.getBuyer() == null) {
-            throw new IllegalArgumentException("Buyer cannot be null");
-        }
-        if (ticket.getEvent() == null) {
-            throw new IllegalArgumentException("Event cannot be null");
-        }
-        if (ticket.getNameUser() == null || ticket.getNameUser().isBlank()) {
-            throw new IllegalArgumentException("Nom d'utilisateur invalide");
-        }
+    public Ticket buyTicket(Ticket ticket, boolean isMultipass) {
+        Customer buyer = Optional.ofNullable(ticket.getBuyer())
+                .orElseThrow(() -> new IllegalArgumentException("Buyer cannot be null"));
 
-        Optional<Ticket> existingTicket = ticketRepository.findByBuyerAndIsMultipassTrue(ticket.getBuyer());
-        if (existingTicket.isPresent()) {
-            throw new IllegalStateException("Le client possède déjà un multipass.");
-        }
+        if (ticket.getEvent() == null)
+            throw new IllegalArgumentException("Event cannot be null");
+
+        if (ticket.getNameUser() == null || ticket.getNameUser().isBlank())
+            throw new IllegalArgumentException("Nom d'utilisateur invalide");
+
+        boolean ticketExists = isMultipass
+                ? ticketRepository.findByBuyerAndIsMultipassTrue(buyer).isPresent()
+                : ticketRepository.findByBuyerAndIsMultipassFalse(buyer).isPresent();
+
+        if (ticketExists)
+            throw new IllegalStateException("Le client possède déjà un ticket/multipass.");
+
         return ticketRepository.save(ticket);
     }
 }

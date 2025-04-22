@@ -2,6 +2,7 @@ package com.example.esport.controller;
 
 import com.example.esport.datamapper.mapper.TicketMapper;
 import com.example.esport.dto.MultipassDto;
+import com.example.esport.dto.TicketDto;
 import com.example.esport.service.TicketService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +30,24 @@ public class TicketController {
         try {
             return ResponseEntity.ok(
                 ticketMapper.convertToMultipassDto(
-                    ticketService.buyMultipass(
-                        ticketMapper.convertToTicketEntity(request)
+                    ticketService.buyTicket(
+                        ticketMapper.convertMultipassToTicketEntity(request),
+                        true
+                    )
+                )
+            );
+        } catch (IllegalArgumentException | IllegalStateException | SecurityException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PostMapping("/ticket")
+    public ResponseEntity<?> buySingleTicket(@RequestBody TicketDto request) {
+        try {
+            return ResponseEntity.ok(
+                ticketMapper.convertToTicketDto(
+                    ticketService.buyTicket(
+                        ticketMapper.convertTicketDtoToTicketEntity(request),
+                        false
                     )
                 )
             );

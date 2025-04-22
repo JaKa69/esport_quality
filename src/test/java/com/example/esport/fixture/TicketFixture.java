@@ -1,6 +1,7 @@
 package com.example.esport.fixture;
 
 import com.example.esport.dto.MultipassDto;
+import com.example.esport.dto.TicketDto;
 import com.example.esport.model.Ticket;
 
 import java.time.LocalDate;
@@ -66,6 +67,16 @@ public class TicketFixture {
             1L,
             CustomerFixture.customerFixture(),
             EventFixture.eventFixture(),
+            100.0f,
+            "John Doe"
+        );
+    }
+    public static TicketDto ticketDtoFixture() {
+        return new TicketDto(
+            1L,
+            CustomerFixture.customerFixture(),
+            EventFixture.eventFixture(),
+            LocalDate.parse("2025-04-09"),
             100.0f,
             "John Doe"
         );

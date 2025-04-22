@@ -79,34 +79,54 @@ public class TicketServiceTest {
             .thenAnswer(invocation -> invocation.getArgument(0));
 
         // WHEN
-        Ticket ticket = ticketService.buyMultipass(TicketFixture.ticketMultipassFixture());
+        Ticket ticket = ticketService.buyTicket(TicketFixture.ticketMultipassFixture(), true);
 
         // THEN
         assertTrue(ticket.isMultipass());
         assertEquals(TicketFixture.ticketMultipassFixture(), ticket);
         verify(ticketRepository).save(any(Ticket.class));
+    } @Test
+    void buyTicket_OK() {
+        // GIVEN
+        Customer buyer = CustomerFixture.customerFixture();
+
+        when(ticketRepository.findByBuyerAndIsMultipassFalse(buyer))
+            .thenReturn(Optional.empty());
+        when(ticketRepository.save(any()))
+            .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // WHEN
+        Ticket ticket = ticketService.buyTicket(TicketFixture.ticketFixture(), false);
+
+        // THEN
+        assertFalse(ticket.isMultipass());
+        assertEquals(TicketFixture.ticketFixture(), ticket);
+        verify(ticketRepository).save(any(Ticket.class));
     }
     @Test
-    void buyMultipass_incompleteDataBuyer() {
+    void buyTicket_incompleteDataBuyer() {
         assertThrows(IllegalArgumentException.class, () ->
-            ticketService.buyMultipass(
-                TicketFixture.ticketWithInvalidDatasBuyerFixture()
+            ticketService.buyTicket(
+                TicketFixture.ticketWithInvalidDatasBuyerFixture(),
+                true
             )
         );
     }
     @Test
-    void buyMultipass_incompleteDataEvent() {
+    void buyTicket_incompleteDataEvent() {
         assertThrows(IllegalArgumentException.class, () ->
-            ticketService.buyMultipass(
-                TicketFixture.ticketWithInvalidDatasEventFixture()
+            ticketService.buyTicket(
+                TicketFixture.ticketWithInvalidDatasEventFixture(),
+                true
             )
         );
     }
     @Test
-    void buyMultipass_incompleteDataNameUser() {
+    void buyTicket_incompleteDataNameUser() {
         assertThrows(IllegalArgumentException.class, () ->
-            ticketService.buyMultipass(
-                TicketFixture.ticketWithInvalidDatasNameUserFixture()
+            ticketService.buyTicket(
+                TicketFixture.ticketWithInvalidDatasNameUserFixture(),
+                true
             )
         );
     }
@@ -114,10 +134,20 @@ public class TicketServiceTest {
     void buyMultipass_alreadyExists() {
         // GIVEN : le client a déjà un multipass
         when(ticketRepository.findByBuyerAndIsMultipassTrue(CustomerFixture.customerFixture()))
+                .thenReturn(Optional.of(TicketFixture.ticketMultipassFixture()));
+
+        // WHEN + THEN
+        assertThrows(IllegalStateException.class, () ->
+                ticketService.buyTicket(TicketFixture.ticketMultipassFixture(), true));
+    }
+    @Test
+    void buyTicket_alreadyExists() {
+        // GIVEN : le client a déjà un ticket
+        when(ticketRepository.findByBuyerAndIsMultipassTrue(CustomerFixture.customerFixture()))
                 .thenReturn(Optional.of(TicketFixture.ticketFixture()));
 
         // WHEN + THEN
         assertThrows(IllegalStateException.class, () ->
-                ticketService.buyMultipass(TicketFixture.ticketFixture()));
+                ticketService.buyTicket(TicketFixture.ticketFixture(), true));
     }
 }

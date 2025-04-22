@@ -2,6 +2,7 @@ package com.example.esport.controller;
 
 import com.example.esport.datamapper.mapper.TicketMapper;
 import com.example.esport.dto.MultipassDto;
+import com.example.esport.dto.TicketDto;
 import com.example.esport.fixture.TicketFixture;
 import com.example.esport.model.Ticket;
 import com.example.esport.service.TicketService;
@@ -53,8 +54,8 @@ class TicketControllerTest {
         MultipassDto dto = TicketFixture.multipassDtoFixture();
         Ticket ticket = TicketFixture.ticketFixture();
 
-        when(ticketMapper.convertToTicketEntity(dto)).thenReturn(ticket);
-        when(ticketService.buyMultipass(ticket)).thenReturn(ticket);
+        when(ticketMapper.convertMultipassToTicketEntity(dto)).thenReturn(ticket);
+        when(ticketService.buyTicket(ticket, true)).thenReturn(ticket);
         when(ticketMapper.convertToMultipassDto(ticket)).thenReturn(dto);
 
         mockMvc.perform(post("/tickets/multipass")
@@ -70,9 +71,43 @@ class TicketControllerTest {
     void shouldReturnBadRequestIfBuyMultipassFails() throws Exception {
         MultipassDto dto = TicketFixture.multipassDtoFixture();
 
-        when(ticketMapper.convertToTicketEntity(dto)).thenThrow(new IllegalArgumentException("Invalid ticket"));
+        when(ticketMapper.convertMultipassToTicketEntity(dto)).thenThrow(new IllegalArgumentException("Invalid ticket"));
 
         mockMvc.perform(post("/tickets/multipass")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid ticket"));
+    }
+    @Test
+    void shouldBuyTicketSuccessfully() throws Exception {
+        TicketDto dto = TicketFixture.ticketDtoFixture();
+        Ticket ticket = TicketFixture.ticketFixture();
+
+        when(ticketMapper.convertTicketDtoToTicketEntity(dto))
+                .thenReturn(ticket);
+        when(ticketService.buyTicket(ticket, false))
+                .thenReturn(ticket);
+        when(ticketMapper.convertToTicketDto(ticket))
+                .thenReturn(dto);
+
+        mockMvc.perform(post("/tickets/ticket")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.event.id").value(dto.getEvent().getId()))
+                .andExpect(jsonPath("$.buyer.id").value(dto.getBuyer().getId()));
+    }
+
+    @Test
+    void shouldReturnBadRequestIfBuyTicketFails() throws Exception {
+        TicketDto dto = TicketFixture.ticketDtoFixture();
+
+        when(ticketMapper.convertTicketDtoToTicketEntity(dto)).thenThrow(new IllegalArgumentException("Invalid ticket"));
+
+        mockMvc.perform(post("/tickets/ticket")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto))
                         .with(csrf()))

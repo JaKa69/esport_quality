@@ -32,7 +32,7 @@ class TicketModelMapperTest {
         Ticket entity = TicketFixture.ticketMultipassFixture();
         MultipassDto dto = TicketFixture.multipassDtoFixture();
         //WHEN
-        ModelMapper modelMapper = mapper.convertToTicketEntity();
+        ModelMapper modelMapper = mapper.convertMultipassToTicketEntity();
         Ticket result = modelMapper.map(dto, Ticket.class);
         //THEN
         assertEquals(result, entity);
