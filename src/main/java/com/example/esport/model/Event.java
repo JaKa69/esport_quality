@@ -16,7 +16,7 @@ import java.util.List;
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String name;
     @Column(name = "dte_start", nullable = false)
     private LocalDate startDate;
@@ -24,5 +24,4 @@ public class Event {
     private LocalDate endDate;
     @OneToMany(mappedBy = "event")
     private List<Ticket> tickets;
-
 }
