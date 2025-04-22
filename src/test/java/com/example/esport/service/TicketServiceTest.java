@@ -2,7 +2,6 @@ package com.example.esport.service;
 
 import com.example.esport.fixture.CustomerFixture;
 import com.example.esport.fixture.EventFixture;
-import com.example.esport.fixture.TicketFixture;
 import com.example.esport.model.Customer;
 import com.example.esport.model.Event;
 import com.example.esport.model.Ticket;
@@ -11,7 +10,9 @@ import com.example.esport.repository.EventRepository;
 import com.example.esport.repository.TicketRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class TicketServiceTest {
     @Test
     public void testTicketIsCreatedAndSaved() throws IOException {
         // Given
-        Event event = EventFixture.createEvent();
+        Event event = EventFixture.eventFixture();
         Customer customer = CustomerFixture.customerFixture();
         when(eventRepository.findById(1L)).thenReturn(Optional.of(event));
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
