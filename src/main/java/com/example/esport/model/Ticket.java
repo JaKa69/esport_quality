@@ -17,10 +17,10 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne
-    @JoinColumn(name = "id_1", nullable = false)
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
     @ManyToOne
-    @JoinColumn(name = "id_2", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer buyer;
     private float price;
     @Column(name = "is_multipass", nullable = false)

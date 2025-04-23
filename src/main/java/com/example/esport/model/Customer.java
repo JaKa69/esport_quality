@@ -17,13 +17,14 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
-    private String firstname;
+    @Column(name = "FIRSTNAME")
+    private String firstName;
     @Column(name = "LASTNAME")
     private String lastName;
     private String password;
     @Column(nullable = false, unique = true)
     private String mail;
-    @OneToMany(mappedBy = "buyer")
+    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL)
     private List<Ticket> purchasedTickets;
 }
 

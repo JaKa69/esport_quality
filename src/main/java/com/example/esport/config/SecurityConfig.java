@@ -26,8 +26,7 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/api/login","/tickets/multipass", "/event/*").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .userDetailsService(userDetailService);
         return http.build();
