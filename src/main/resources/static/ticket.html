@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Liste des Tickets</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .tickets-container {
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .ticket {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 16px 0;
+    }
+
+    .ticket:last-child {
+      border-bottom: none;
+    }
+
+    .ticket h2 {
+      margin: 0;
+      font-size: 1.4rem;
+      color: #2c3e50;
+    }
+
+    .ticket p {
+      margin: 4px 0;
+      color: #555;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      color: #34495e;
+    }
+
+    a {
+      color: #005fcc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="tickets-container">
+  <div class="header">
+    <h1>Tickets disponibles</h1>
+    <p><a href="/home.html">Retour à l'accueil</a></p>
+  </div>
+
+  <div id="tickets-list" role="list">
+  </div>
+</div>
+
+<script>
+  async function fetchTickets() {
+    try {
+      const response = await fetch('/tickets');
+      const tickets = await response.json();
+
+      const container = document.getElementById('tickets-list');
+      if (tickets.length === 0) {
+        container.innerHTML = "<p>Aucun ticket disponible.</p>";
+        return;
+      }
+
+      tickets.forEach(ticket => {
+        const ticketElement = document.createElement("div");
+        ticketElement.className = "ticket";
+        ticketElement.setAttribute("role", "listitem");
+
+        ticketElement.innerHTML = `
+          <h2>${ticket.eventName}</h2>
+          <p><strong>Prix :</strong> ${ticket.price} €</p>
+          <p><strong>Date de réservation :</strong> ${ticket.reservationDate}</p>
+          <p><strong>Multipass :</strong> ${ticket.multipass ? "Oui" : "Non"}</p>
+        `;
+
+        container.appendChild(ticketElement);
+      });
+    } catch (error) {
+      document.getElementById("tickets-list").innerText = "Erreur lors du chargement des tickets.";
+      console.error("Erreur : ", error);
+    }
+  }
+
+  fetchTickets();
+</script>
+</body>
+</html>

@@ -1,22 +1,109 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Connexion</title>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #2980b9;
+      --background-color: #f4f4f4;
+      --text-color: #333;
+      --border-radius: 8px;
+      --font-family: "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-family);
+      background-color: var(--background-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    form {
+      background: white;
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover,
+    button:focus {
+      background-color: #1c6fa5;
+      outline: none;
+    }
+
+    #message {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: red;
+      text-align: center;
+    }
+
+    /* Accessibilité */
+    input:focus,
+    button:focus {
+      outline: 2px solid #1c6fa5;
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
 <h1>Connexion</h1>
-<form id="login-form">
+
+<form id="login-form" aria-label="Formulaire de connexion">
   <label for="username">Nom d'utilisateur :</label>
-  <input type="text" id="username" name="username" required><br><br>
+  <input type="text" id="username" name="username" required autocomplete="username">
 
   <label for="password">Mot de passe :</label>
-  <input type="password" id="password" name="password" required><br><br>
+  <input type="password" id="password" name="password" required autocomplete="current-password">
 
   <button type="submit">Se connecter</button>
 </form>
 
-<div id="message"></div>
+<div id="message" role="alert" aria-live="polite"></div>
 
 <script>
   document.getElementById("login-form").addEventListener("submit", async function (e) {
@@ -25,33 +112,29 @@
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    const response = await fetch("/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        login: username,
-        password: password
-      })
-    })
-    .then(response => {
+    try {
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          login: username,
+          password: password
+        })
+      });
+
+      const messageDiv = document.getElementById("message");
+
       if (response.ok) {
-        window.location.href = "/home.html";
+        const user = await response.json();
+        localStorage.setItem("user", JSON.stringify(user));
+        window.location.href = "/home";
       } else {
-        return response.text().then(msg => alert("Utilisateur ou mot de passe incorrect"));
+        messageDiv.innerText = "Identifiants incorrects.";
       }
-    });
-
-    const messageDiv = document.getElementById("message");
-
-    if (response.ok) {
-      const user = await response.json();
-      messageDiv.innerText = `Bienvenue, ${user.firstName} ${user.lastName} !`;
-      // Redirection possible ici
-      // window.location.href = "/";
-    } else {
-      messageDiv.innerText = "Identifiants incorrects.";
+    } catch (error) {
+      document.getElementById("message").innerText = "Une erreur est survenue.";
     }
   });
 </script>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Événements</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            color: #333;
+        }
+
+        #event-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 40px;
+            gap: 20px;
+        }
+
+        .event-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 300px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .event-dates {
+            font-size: 1rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Événements à venir</h1>
+<div id="event-list"></div>
+
+<script>
+    fetch('/events')
+        .then(response => response.json())
+        .then(events => {
+            const container = document.getElementById('event-list');
+            events.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'event-card';
+                card.innerHTML = `
+                    <div class="event-name">${event.name}</div>
+                    <div class="event-dates">${event.dateStart} - ${event.dateEnd}</div>
+                `;
+                container.appendChild(card);
+            });
+        })
+        .catch(error => console.error('Erreur lors de la récupération des événements :', error));
+</script>
+
+</body>
+</html>

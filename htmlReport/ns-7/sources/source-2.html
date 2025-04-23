@@ -1,0 +1,102 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > Event</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.esport.model</a>
+</div>
+
+<h1>Coverage Summary for Class: Event (com.example.esport.model)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">Event$HibernateInstantiator$mtHsHCey</td>
+  </tr>
+  <tr>
+    <td class="name">Event$HibernateProxy$nPwk8k36</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.esport.model;
+&nbsp;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;EVENT&quot;)
+&nbsp;@Data
+&nbsp;@AllArgsConstructor
+&nbsp;@NoArgsConstructor
+&nbsp;public class Event {
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Integer id;
+&nbsp;    private String name;
+&nbsp;    @Column(name = &quot;dte_start&quot;, nullable = false)
+&nbsp;    private LocalDate startDate;
+&nbsp;    @Column(name = &quot;dte_end&quot;, nullable = false)
+&nbsp;    private LocalDate endDate;
+&nbsp;    @OneToMany(mappedBy = &quot;event&quot;)
+&nbsp;    private List&lt;Ticket&gt; tickets;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 16:25</div>
+</div>
+</body>
+</html>
